@@ -17,7 +17,7 @@ data = sns.load_dataset("iris")
 
 data.head()
 
-# writing a function for converting species column from string to numeric
+# a function for converting species column from string to numeric
 
 def convert(species):
     if species == "setosa":
@@ -33,7 +33,7 @@ def convert(species):
 
 data["species"] = data["species"].apply(convert)
 
-data['species'].value_counts()
+# data['species'].value_counts()
 
 data
 
@@ -50,7 +50,7 @@ np.sort(data_scores)[0:17]
 
 tv = np.sort(data_scores)[7]
 
-# Here I want to add the scores as a new column. it is optional.
+# add the scores as a new column.
 
 data["LOF"] = data_scores.tolist()
 
@@ -79,21 +79,24 @@ def be(data: pd.DataFrame) -> pd.DataFrame:
   
   """
   Assing a variable to the Nearest Neighbors function and fit the data.
-
   """
 
-  NN = NearestNeighbors(n_neighbors=5, radius=0.4, algorithm = 'kd_tree')
+  NN = NearestNeighbors(n_neighbors = 5, radius = 0.4, algorithm = 'kd_tree')
   NN.fit(data)
   
   abc = []
 
   cba = []
 
+  ab_list = []
+
+  ba_list = []
+
   for i in outliers.itertuples(index = False, name = 'Miuul'):
     
     """
-    # kneighbors methodunu kullanarak en yakın komşuları buluyoruz
-    Note: kneighbors methodunu kullanırken n_neighbors parametresini 2 olarak seçmelisiniz.
+    find the nearest neighbors using the k neighbors method.
+    Note: You must set the n_neighbors parameter to 2 when using the k neighbors method.
     
     """
 
@@ -102,17 +105,21 @@ def be(data: pd.DataFrame) -> pd.DataFrame:
     abc.append(data.iloc[ab])
     cba.append(data.iloc[ba])
 
-    # printing index number of outliers and nearest neighbor
-    print(ab,ba)
-    
+    ab_list.append(ab)
+    ba_list.append(ba)
+
+  # showing indexes of outliers and nearest neighbor
+  display(pd.DataFrame({"Outlier"          : ab_list,
+                        "Nearist Neighbor" : ba_list}))
+
   print("_" * 75)
 
-  # showing OUTLIERS
-  print("OUTLIERS")
+  # showing OUTLIER Values
+  print("\n OUTLIERS:")
   display(pd.DataFrame(abc))
 
-  # showing NEAREST NEIGBORHS
-  print("NEAREST NEIGBORHS")
+  # showing NEAREST NEIGHBORS
+  print("\n NEAREST NEIGHBORS:")
   display(pd.DataFrame(cba))
   
 be(data)
@@ -121,36 +128,45 @@ be(data)
 
 def be_app(data: pd.DataFrame) -> pd.DataFrame:
   
-  NN = NearestNeighbors(n_neighbors=2, radius=0.4, algorithm = 'kd_tree')
+  NN = NearestNeighbors(n_neighbors = 2, radius = 0.4, algorithm = 'kd_tree')
   NN.fit(data)
   
   abc = []
 
   cba = []
 
+  ab_list = []
+
+  ba_list = []
+
   for i in outliers.itertuples(index = False, name = 'Miuul'):
 
     ab, ba = NN.kneighbors([list(i)], 2, return_distance = False)[0]
 
     # basicly assigning outliers to nearest neighbors
-    # Note: I named  as ab and ba, be careful not to confuse the two.
+    # Note: I named  as ab and ba, be careful to confuse this two
 
+    ab_list.append(ab)
+    ba_list.append(ba)
+
+    # assigning outliers to their nearest neighbors
     data.iloc[ab] = data.iloc[ba]
-
+    
     abc.append(data.iloc[ab])
     cba.append(data.iloc[ba])
 
-    # printing index number of outliers and nearest neighbor
-    print(ab,ba)
-    
+  # showing indexes of outliers and nearest neighbor
+  display(pd.DataFrame({"Outlier"          : ab_list,
+                        "Nearist Neighbor" : ba_list}))
+
   print("_" * 75)
 
-  # showing OUTLIERS
-  print("OUTLIERS")
+  # showing OUTLIER Values
+  print("\n OUTLIERS:")
   display(pd.DataFrame(abc))
 
-  # showing NEAREST NEIGBORHS
-  print("NEAREST NEIGBORHS")
+  # showing NEAREST NEIGHBORS
+  print("\n NEAREST NEIGHBORS:")
   display(pd.DataFrame(cba))
   
 be_app(data)
